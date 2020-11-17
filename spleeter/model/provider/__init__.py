@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 from os import environ, makedirs
 from os.path import exists, isabs, join, sep
 
-__email__ = 'research@deezer.com'
+__email__ = 'spleeter@deezer.com'
 __author__ = 'Deezer Research'
 __license__ = 'MIT License'
 
@@ -38,12 +38,14 @@ class ModelProvider(ABC):
         """
         pass
 
-    def writeProbe(self, directory):
+    @staticmethod
+    def writeProbe(directory):
         """ Write a model probe file into the given directory.
 
         :param directory: Directory to write probe into.
         """
-        with open(join(directory, self.MODEL_PROBE_PATH), 'w') as stream:
+        probe = join(directory, ModelProvider.MODEL_PROBE_PATH)
+        with open(probe, 'w') as stream:
             stream.write('OK')
 
     def get(self, model_directory):

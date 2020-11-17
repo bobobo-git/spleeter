@@ -38,13 +38,12 @@ except ImportError:
     logger.error('Please install musdb and museval first, abort')
     sys.exit(1)
 
-__email__ = 'research@deezer.com'
+__email__ = 'spleeter@deezer.com'
 __author__ = 'Deezer Research'
 __license__ = 'MIT License'
 
 _SPLIT = 'test'
 _MIXTURE = 'mixture.wav'
-_NAMING = 'directory'
 _AUDIO_DIRECTORY = 'audio'
 _METRICS_DIRECTORY = 'metrics'
 _INSTRUMENTS = ('vocals', 'drums', 'bass', 'other')
@@ -68,13 +67,17 @@ def _separate_evaluation_dataset(arguments, musdb_root_directory, params):
     separate_entrypoint(
         Namespace(
             audio_adapter=arguments.audio_adapter,
-            audio_filenames=mixtures,
-            audio_codec='wav',
+            configuration=arguments.configuration,
+            inputs=mixtures,
             output_path=join(audio_output_directory, _SPLIT),
-            output_naming=_NAMING,
-            max_duration=600.,
+            filename_format='{foldername}/{instrument}.{codec}',
+            codec='wav',
+            duration=600.,
+            offset=0.,
+            bitrate='128k',
             MWF=arguments.MWF,
-            verbose=arguments.verbose),
+            verbose=arguments.verbose,
+            stft_backend=arguments.stft_backend),
         params)
     return audio_output_directory
 
@@ -160,3 +163,5 @@ def entrypoint(arguments, params):
         get_logger().info('%s:', instrument)
         for metric, value in metric.items():
             get_logger().info('%s: %s', metric, f'{np.median(value):.3f}')
+
+    return metrics

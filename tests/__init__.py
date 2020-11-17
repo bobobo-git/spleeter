@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf8
 
-""" Packages that provides static resources file for the library. """
+""" Unit testing package. """
 
 __email__ = 'spleeter@deezer.com'
 __author__ = 'Deezer Research'

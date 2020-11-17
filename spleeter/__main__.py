@@ -10,11 +10,15 @@
 import sys
 import warnings
 
+from . import SpleeterError
 from .commands import create_argument_parser
 from .utils.configuration import load_configuration
-from .utils.logging import enable_logging, enable_tensorflow_logging
+from .utils.logging import (
+    enable_logging,
+    enable_tensorflow_logging,
+    get_logger)
 
-__email__ = 'research@deezer.com'
+__email__ = 'spleeter@deezer.com'
 __author__ = 'Deezer Research'
 __license__ = 'MIT License'
 
@@ -26,19 +30,22 @@ def main(argv):
 
     :param argv: Provided command line arguments.
     """
-    parser = create_argument_parser()
-    arguments = parser.parse_args(argv[1:])
-    enable_logging()
-    if arguments.verbose:
-        enable_tensorflow_logging()
-    if arguments.command == 'separate':
-        from .commands.separate import entrypoint
-    elif arguments.command == 'train':
-        from .commands.train import entrypoint
-    elif arguments.command == 'evaluate':
-        from .commands.evaluate import entrypoint
-    params = load_configuration(arguments.params_filename)
-    entrypoint(arguments, params)
+    try:
+        parser = create_argument_parser()
+        arguments = parser.parse_args(argv[1:])
+        enable_logging()
+        if arguments.verbose:
+            enable_tensorflow_logging()
+        if arguments.command == 'separate':
+            from .commands.separate import entrypoint
+        elif arguments.command == 'train':
+            from .commands.train import entrypoint
+        elif arguments.command == 'evaluate':
+            from .commands.evaluate import entrypoint
+        params = load_configuration(arguments.configuration)
+        entrypoint(arguments, params)
+    except SpleeterError as e:
+        get_logger().error(e)
 
 
 def entrypoint():
